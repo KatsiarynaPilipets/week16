@@ -1,80 +1,87 @@
-document.getElementById('registration-form').addEventListener('submit', function(event) {
-    event.preventDefault();
-    
-    function validateField(field, errorField, errorMessage) {
-    if (!field.validity.valid) {
-        field.classList.add('error');
-        errorField.textContent = errorMessage;
-        return false;
-    } else {
-        field.classList.remove('error');
-        errorField.textContent = '';
-        return true;
-    }
-    }
+const form = document.getElementById('registration-form');
 
-    const nameField = document.getElementById('name');
-    const emailField = document.getElementById('email');
-    const ageField = document.getElementById('age');
-    const professionField = document.getElementById('profession');
-    const passwordField = document.getElementById('password');
-    const confirmPasswordField = document.getElementById('confirm-password');
-    const agreementField = document.getElementById('terms');
+  form.addEventListener('submit', function(event) {
+   event.preventDefault();
 
-    const nameErrorField = document.getElementById('name-error');
-    const emailErrorField = document.getElementById('email-error');
-    const ageErrorField = document.getElementById('age-error');
-    const professionErrorField = document.getElementById('profession-error');
-    const passwordErrorField = document.getElementById('password-error');
-    const confirmPasswordErrorField = document.getElementById('confirm-password-error');
+   if (!form.checkValidity()) {
+    displayErrors();
+   } else {
+    displayFormData();
+    clearForm();
+   }
+  });
 
-    nameErrorField.textContent = '';
-    emailErrorField.textContent = '';
-    ageErrorField.textContent = '';
-    professionErrorField.textContent = '';
-    passwordErrorField.textContent = '';
-    confirmPasswordErrorField.textContent = '';
+  form.addEventListener('input', function(event) {
+   clearErrors();
+  });
 
-    nameField.classList.remove('error');
-    emailField.classList.remove('error');
-    ageField.classList.remove('error');
-    professionField.classList.remove('error');
-    passwordField.classList.remove('error');
-    confirmPasswordField.classList.remove('error');
+  function displayErrors() {
+   clearErrors();
 
-    const isNameValid = validateField(nameField, nameErrorField, 'Пожалуйста, введите корректное имя');
-    const isEmailValid = validateField(emailField, emailErrorField, 'Пожалуйста, введите корректный email');
-    const isAgeValid = validateField(ageField, ageErrorField, 'Пожалуйста, введите корректный возраст');
-    const isProfessionValid = validateField(professionField, professionErrorField, 'Пожалуйста, выберите профессию');
-    const isPasswordValid = validateField(passwordField, passwordErrorField, 'Пароль должен быть не менее 8 символов длиной и содержать хотя бы одну заглавную букву, одну строчную букву и одну цифру');
-    const isConfirmPasswordValid = validateField(confirmPasswordField, confirmPasswordErrorField, 'Пароли не совпадают');
+   if (!form.name.validity.valid) {
+    showErrorMessage('name', 'Имя должно содержать только буквы и пробелы, от 2 до 20 символов.');
+   }
 
-    if (!agreementField.checked) {
-    agreementField.classList.add('error');
-    agreementErrorField.textContent = 'Необходимо согласиться собработкой данных';
-    const isAgreementValid = false;
-    } else {
-    agreementField.classList.remove('error');
-    agreementErrorField.textContent = '';
-    const isAgreementValid = true;
-    }
+   if (!form.email.validity.valid) {
+    showErrorMessage('email', 'Введите действительный адрес электронной почты.');
+   }
 
-    if (isNameValid && isEmailValid && isAgeValid && isProfessionValid && isPasswordValid && isConfirmPasswordValid && isAgreementValid) {
-    console.log('Имя:', nameField.value);
-    console.log('Email:', emailField.value);
-    console.log('Возраст:', ageField.value);
-    console.log('Пол:', document.querySelector('input[name="gender"]:checked').value);
-    console.log('Профессия:', professionField.value);
-    console.log('Пароль:', passwordField.value);
-    console.log('Подтверждение пароля:', confirmPasswordField.value);
+   if (!form.age.validity.valid) {
+    showErrorMessage('age', 'Введите возраст.');
+   }
 
-    nameField.value = '';
-    emailField.value = '';
-    ageField.value = '';
-    professionField.value = '';
-    passwordField.value = '';
-    confirmPasswordField.value = '';
-    agreementField.checked = false;
-    
-    }
-    });
+   if (!form.profession.validity.valid) {
+    showErrorMessage('profession', 'Выберите профессию.');
+   }
+
+   if (!form.password.validity.valid) {
+    showErrorMessage('password', 'Пароль должен содержать не менее 8 символов, включая заглавные и строчные буквы, а также цифры.');
+   }
+
+   if (!form['confirm-password'].validity.valid) {
+    showErrorMessage('confirm-password', 'Пароли не совпадают или не соответствуют требованиям.');
+   }
+
+   if (!form.agree.validity.valid) {
+    showErrorMessage('agree', 'Необходимо согласиться с обработкой данных.');
+   }
+  }
+
+  function clearErrors() {
+   const errorMessages = form.querySelectorAll('.error-message');
+   const formInputs = form.querySelectorAll('.form-input');
+
+   errorMessages.forEach(function(error) {
+    error.textContent = '';
+   });
+
+   formInputs.forEach(function(input) {
+    input.classList.remove('error');
+   });
+  }
+
+  function showErrorMessage(fieldName, message) {
+   const errorElement = document.getElementById(fieldName + '-error');
+   const inputElement = document.getElementById(fieldName);
+
+   errorElement.textContent = message;
+   inputElement.classList.add('error');
+  }
+
+  function displayFormData() {
+   const name = form.name.value;
+   const email = form.email.value;
+   const age = form.age.value;
+   const gender = form.gender.value;
+   const profession = form.profession.value;
+
+   console.log('Имя:', name);
+   console.log('Электронная почта:', email);
+   console.log('Возраст:', age);
+   console.log('Пол:', gender);
+   console.log('Профессия:', profession);
+  }
+
+  function clearForm() {
+   form.reset();
+  }
